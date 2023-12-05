@@ -15,8 +15,11 @@ function getDisplayDialog() {
           [Parameter(Mandatory = $false)] [int] $givingUpAfter 
      )
 
-     Write-host "Dialog text is: $dialogText"
+     #Write-host "Dialog text is: $dialogText"
+     $display
+     "display dialog $dialogText"|/usr/bin/osascript
 }
 
 $dialogText = "Test dialog text"
-getDisplayDialog 
+getDisplayDialog -dialogText $dialogText 
+
