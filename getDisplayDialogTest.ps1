@@ -1,6 +1,7 @@
-function getDisplayDialog() {
+function getDisplayDialog {
      Param (
           [Parameter(Mandatory = $true)] [string] $dialogText,
+          [Parameter(Mandatory = $false)] [string] $defaultAnswer,
           [Parameter(Mandatory = $false)] [bool] $hiddenAnswer,
           [Parameter(Mandatory = $false)] [array] $buttons,
           [Parameter(Mandatory = $false)] [string] $defaultButtonText,
@@ -15,11 +16,17 @@ function getDisplayDialog() {
           [Parameter(Mandatory = $false)] [int] $givingUpAfter 
      )
 
-     #Write-host "Dialog text is: $dialogText"
-     $display
-     "display dialog $dialogText"|/usr/bin/osascript
+##building the full command will end up being a big fat if then else chain, but it will be worth it
+##or we could put everything in an array and switch-case the whole thing
+##do checks for wher eyou have ints/strings/etc for the same thign, like default button, icons, etc. 
+
+"display dialog `"$dialogText`" default answer `"$defaultAnswer`" with icon $iconEnum"|/usr/bin/osascript 
 }
 
-$dialogText = "Test dialog text"
-getDisplayDialog -dialogText $dialogText 
+$dialogText = "This is a test dialog"
+$defaultAnswer = "default answer"
+$iconEnum = "caution"
+#getDisplayDialog -dialogText $dialogText -defaultAnswer $defaultAnswer 
+"display dialog `"$dialogText`" default answer `"$defaultAnswer`" with icon $iconEnum"|/usr/bin/osascript
+#getDisplayDialog -dialogText "this is more text" -title "here's a title"
 
