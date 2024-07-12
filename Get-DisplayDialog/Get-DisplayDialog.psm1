@@ -43,20 +43,88 @@ giving up after (only if you use givingUpAfter)
 
 The hashtable is returned to whatever called the function
 
+As PowerShell is case-insensitive, so are the string params
+
 .EXAMPLE
 Simple notification dialog with default buttons: Get-DisplayDialog "My Simple Dialog"
+return will be either:
+
+Name                           Value
+----                           -----
+button returned                OK
+
+or
+
+userCancelError
 
 .EXAMPLE
-second example
+Simple notification dialog with default buttons: Get-DisplayDialog -dialogText "My Simple Dialog"
+return will be either:
+
+Name                           Value
+----                           -----
+button returned                OK
+
+or
+
+userCancelError
 
 .EXAMPLE
-third example
+dialog with entered text, everything else defaults: Get-DisplayDialog "My Simple Dialog" -defaultAnswer "type something"
+returns:
+
+Name                           Value
+----                           -----
+button returned                OK
+text returned                  type something (or whatever you typed)
+
+or
+
+userCancelError
+
+.EXAMPLE
+dialog with custom buttons: Get-DisplayDialog "My buttons" -defaultAnswer "Default Answer" -buttons "Okay", "Not Okay", "Meh"
+returns:
+
+Name                           Value
+----                           -----
+button returned                Meh
+text returned                  Default Answer
+
+.EXAMPLE
+dialog with custom buttons and specified default/cancel clicking cancel: Get-DisplayDialog "My buttons" -defaultAnswer "Default Answer" -buttons "Okay", "Not Okay", "Meh" -defaultButtonText "Meh" -cancelButtonInt 2
+(cancelButtonInt corresponds to "Not Okay")
+returns:
+
+userCancelError
+
+.EXAMPLE
+dialog with Caution Icon enum: Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -iconEnum "Caution" 
+
+.EXAMPLE dialog that gives up after 20 seconds and no button clicked:  Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -givingUpAfter 20
+returns:
+
+Name                           Value
+----                           -----
+button returned                
+text returned                  type something
+gave up                        true
+
+.EXAMPLE same dialog clicking button: Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -givingUpAfter 20
+returns:
+
+Name                           Value
+----                           -----
+button returned                OK
+text returned                  type something
+gave up                        false
+
 
 .NOTES
-Notes
+There's many combinations, and hopefully this will be useful for y'all. Will slowly be rolling out modules for all the different AppleScript UI Primitives
 
 .LINK
-hhttps://github.com/johncwelch/Get-PSDisplayDialog
+https://github.com/johncwelch/Get-PSDisplayDialog
 #>
 
 function Get-DisplayDialog {
