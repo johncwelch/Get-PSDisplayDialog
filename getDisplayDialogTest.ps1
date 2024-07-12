@@ -3,7 +3,7 @@ function Get-DisplayDialog {
           [Parameter(Mandatory = $true,Position=0)][string] $dialogText,
           [Parameter(Mandatory = $false)][string] $defaultAnswer,
           [Parameter(Mandatory = $false)][bool] $hiddenAnswer = $false, #default for this is false normally
-          [Parameter(Mandatory = $false)][array] $buttons = [string]@(),
+          [Parameter(Mandatory = $false)][array] $buttons,
           [Parameter(Mandatory = $false)][string] $defaultButtonText,
           [Parameter(Mandatory = $false)][int] $defaultButtonInt,
           [Parameter(Mandatory = $false)][string] $cancelButtonText,
@@ -41,7 +41,7 @@ function Get-DisplayDialog {
 
      #-buttons processing. We first test for a count between 1 and three. If it's 0, we don't care, if it's > 3, pop error and exit
      if(($buttons.length) -lt 1) {
-           
+           #do nothing
      } elseif($buttons.Length -eq 1){
 		#is this the only button? stupid but allowable, we only want one button, no commas and break out of the if
           $button = $buttons[0]
@@ -154,7 +154,6 @@ function Get-DisplayDialog {
           $displayDialogCommand = $displayDialogCommand + "giving up after $givingUpAfterString "
      }
 
-	#$displayDialogCommand
 	$dialogReplyString = $displayDialogCommand|/usr/bin/osascript -so
 	
 	#Write-Output "The dialog reply is: $dialogReply"
@@ -173,7 +172,7 @@ function Get-DisplayDialog {
 [System.Collections.ArrayList]$dialogReplyArrayList = @()
 $dialogReply = [ordered]@{}
 
-$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -givingUpAfter 20 -buttons "one","two" -iconEnum "stop"
+$dialogReplyString = Get-DisplayDialog -dialogText "My Simple Dialog"
 
 #test for cancel button
 if($dialogReplyString.Contains("execution error: User canceled. `(-128`)")) {
@@ -198,7 +197,7 @@ foreach($item in $dialogReplyArrayList) {
 }
 
 #return the hashtable
-return $dialogReply
+#return $dialogReply
 
 
 

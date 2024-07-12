@@ -36,13 +36,15 @@ Parameter List
 There are two error messages that happen. If you hit cancel for the dialog, the module returns a "userCancelError" string instead of the hashtable
 if you pass a bad value for iconEnum, then a "badIconEnumError" string is returned instead of the hashtable.
 
-At most you can get three values in the hashtable:
+At most you get three values in the hashtable:
 button returned (always unless you canceld)
 text returned (only if you use defaultAnswer)
 giving up after (only if you use givingUpAfter)
 
+The hashtable is returned to whatever called the function
+
 .EXAMPLE
-example
+Simple notification dialog with default buttons: Get-DisplayDialog "My Simple Dialog"
 
 .EXAMPLE
 second example
@@ -62,7 +64,7 @@ function Get-DisplayDialog {
           [Parameter(Mandatory = $true,Position=0)][string] $dialogText,
           [Parameter(Mandatory = $false)][string] $defaultAnswer,
           [Parameter(Mandatory = $false)][bool] $hiddenAnswer = $false, #default for this is false normally
-          [Parameter(Mandatory = $false)][array] $buttons = [string]@(),
+          [Parameter(Mandatory = $false)][array] $buttons,
           [Parameter(Mandatory = $false)][string] $defaultButtonText,
           [Parameter(Mandatory = $false)][int] $defaultButtonInt,
           [Parameter(Mandatory = $false)][string] $cancelButtonText,
