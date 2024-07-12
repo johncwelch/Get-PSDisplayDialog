@@ -17,3 +17,5 @@ we're well on our way to this module!
 20240712
 Got the iconEnum and iconPath working. Disabled iconText and iconInt because those refer to resource IDs and I don't think those are used the way they were a few decades annoying
 All the supported parameters work, tested, so the script is done. it's a test script
+
+version 1.0 of the module is done!

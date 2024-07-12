@@ -1,5 +1,7 @@
 The idea here is to provide a "better" or perhaps "more PowerShell" interface to Display Dialog, to make up for the lack of UI primitives for PowerShell on macOS. If this works out reasonably well, I may do others.
 
+THIS IS A macOS-ONLY MODULE
+
 EDITORIAL
 This shouldn't be necessary, except Apple hasn't had an OS-wide automation framework and implementation on the Mac since Mac OS 9. No version of macOS has had one. This is shameful, and no, Shortcuts don't count. Honestly do you really think Shortcuts will every evolve past a way to run i(Pad)OS shortcuts on a Mac? 
 
@@ -19,3 +21,10 @@ Also note that we only do icon enums and paths to icns files (as posix paths onl
 for anyone interested, the reason for not having iconEnum as an actual enum is that it's not worth the work to not have it be a string. And yes, normally in AppleScript, you can also use an int/number for note/caution/stop, but for now, not here. Again, if you have a critical reason for having to do the int as well, i can be convinced to use a proper enum
 
 in all the parameters, as we graft them on to the command, we add a trailing space so the commands are correct
+
+MANUAL INSTALL
+to manually install, create a "Get-DisplayDialog" folder in ~/.local/share/powershell/modules, then copy the .psm1 and .psd1 files from the same folder here to that folder. restart any powershell sessions or run "Import-Module Get-DisplayDialog"
+
+The help is fairly extensive, so read Get-Help Get-DisplayDialog -Detailed at least once
+
+i am planning on submitting this to the Powershell Gallery so once that's done, Install-Module will work.
