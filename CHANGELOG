@@ -9,5 +9,7 @@ hidden answer (show entered text as bullets, default is false as per standard ad
 buttons (optional) $buttons, this is an array, kind of a pain in the ass
 default button (text, optional) mutually exclusive to...
 default button (int, optional), this too was annoying to build out, but it works
+title (text, optional)
+iconEnum (text, optional)
 
 we're well on our way to this module!

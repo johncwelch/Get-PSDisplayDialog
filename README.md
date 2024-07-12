@@ -14,3 +14,4 @@ Should Apple change the facts, I'll change my opinion. Until then?
 🖕🖕🖕
 
 No, this is not particularly elegant code, but it IS well-commented code and somewhat readable
+Also note that we only do icon enums and paths to icns files (as posix paths only for now). the int and text are older ways of referring to icons that may not worth the effort at first.
