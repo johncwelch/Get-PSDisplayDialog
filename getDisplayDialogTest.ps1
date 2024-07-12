@@ -16,6 +16,7 @@ function Get-DisplayDialog {
           [Parameter(Mandatory = $false)][int] $givingUpAfter 
      )
 	$hasDefaultButton = $false
+     $hasCancelButton = $false
 
      #default dialog command (this is required so it ALWAYS has to be here)
      $displayDialogCommand = "display dialog `"$dialogText`" "
@@ -86,9 +87,37 @@ function Get-DisplayDialog {
 	} else {
 		#we are going to ignore everything if this is hit
 	}
-	#Write-Output "`n The default button text: $defaultButtonText and the default button int: $defaultButtonInt`n"
+
+     ##cancel button
+     #basically just like default button 
+     #may turn this into its own function. May not. feel cute, may delete later
+     if($cancelButtonInt -gt 0) {
+		#there's a default button int specified
+		$hasCancelButton = $true #we won't check for text in this case
+		$displayDialogCommand = $displayDialogCommand + "cancel button $cancelButtonInt "
+	} elseif ((-not [string]::IsNullOrEmpty($cancelButtonText)) -and (-not $hasCancelButton)) {
+		#there's something besides nothing in $hasDefaultButton and we haven't already done something with $defaultButtonInt
+		$hasCancelButton = $true
+		$displayDialogCommand = $displayDialogCommand + "cancel button `"$cancelButtonText`" "
+	} elseif (-not [string]::IsNullOrEmpty($cancelButtonText)) {
+		#just in case we hit a weird condition
+		$hasCancelButton = $true
+		$displayDialogCommand = $displayDialogCommand + "cancel button `"$cancelButtonText`" "
+	} else {
+		#we are going to ignore everything if this is hit
+	}
 	
-	Write-Output "$displayDialogCommand"
+     ##title
+     if(-not [string]::IsNullOrEmpty($title)){
+          #there's something in the title
+          $displayDialogCommand = $displayDialogCommand + "with title `"$title`" "
+
+     }
+
+     if(-not [string]::IsNullOrEmpty($iconEnum)){
+          $displayDialogCommand = $displayDialogCommand + "with icon $iconEnum"
+     }
+	#Write-Output "$displayDialogCommand`n"
 	
 	$dialogReply = $displayDialogCommand|/usr/bin/osascript -so
 	
@@ -107,7 +136,7 @@ function Get-DisplayDialog {
 [System.Collections.ArrayList]$dialogReplyArray = @()
 [System.Collections.ArrayList]$dialogReply = @()
 
-$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -defaultAnswer "Default answer" -buttons "one","two","three" 
+$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -defaultAnswer "Default answer" -buttons "one","two","three" -iconEnum "note" -title "My Title"
 #-buttons "one","two","three"
 
 #test for cancel button
@@ -118,6 +147,7 @@ if($dialogReplyString.Contains("execution error: User canceled. `(-128`)")) {
 
 #$dialogReplyString.GetType()
 Write-Output "`n"
+Write-Output "`n"
 #build initial reply array
 $dialogReplyArray = $dialogReplyString.Split(",")
 
@@ -126,5 +156,7 @@ foreach($item in $dialogReplyArray) {
     $dialogReply.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
 }
 $dialogReply
+#$dialogReply[0]
+#$dialogReply[1]
 
 
