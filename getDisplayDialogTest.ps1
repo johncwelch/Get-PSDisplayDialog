@@ -9,14 +9,19 @@ function Get-DisplayDialog {
           [Parameter(Mandatory = $false)][string] $cancelButtonText,
           [Parameter(Mandatory = $false)][int] $cancelButtonInt,
           [Parameter(Mandatory = $false)][string] $title,
-          [Parameter(Mandatory = $false)][string] $iconText,
-          [Parameter(Mandatory = $false)][int] $iconInt,
+          #[Parameter(Mandatory = $false)][string] $iconText,
+          #[Parameter(Mandatory = $false)][int] $iconInt,
           [Parameter(Mandatory = $false)][string] $iconEnum,
           [Parameter(Mandatory = $false)][string] $iconPath,
           [Parameter(Mandatory = $false)][int] $givingUpAfter 
      )
+
+     #we're not doing $iconText/$iconInt because that's based on resource name/number which seems really old and not applicable anymore
+     #but if you've a real need for it, I can be convinced.
+
 	$hasDefaultButton = $false
      $hasCancelButton = $false
+     $hasIcon = $false
 
      #default dialog command (this is required so it ALWAYS has to be here)
      $displayDialogCommand = "display dialog `"$dialogText`" "
@@ -114,10 +119,34 @@ function Get-DisplayDialog {
 
      }
 
+     ##iconEnum and/or path
      if(-not [string]::IsNullOrEmpty($iconEnum)){
-          $displayDialogCommand = $displayDialogCommand + "with icon $iconEnum"
+          #$iconEnum wins if both enum and path are filled out
+          $hasIcon = $true
+          $displayDialogCommand = $displayDialogCommand + "with icon $iconEnum "
+     } elseif ((-not [string]::IsNullOrEmpty($iconPath)) -and (-not $hasIcon)) {
+          #no $iconEnum but $iconPath
+          $hasIcon = $true
+          $displayDialogCommand = $displayDialogCommand + "with icon `(posix file `"$iconPath`"`) "
+     } elseif (-not [string]::IsNullOrEmpty($iconPath)){
+          #weird condition
+          $hasIcon = $true
+          $displayDialogCommand = $displayDialogCommand + "with icon `(posix file `"$iconPath`"`) "
+     } else {
+          #we are going to ignore everything if this is hit
      }
-	#Write-Output "$displayDialogCommand`n"
+	
+     ##giving up after
+     #note that setting giving up after to 0 or negative integers is the same as infinity.
+     #the default value is 0, so we check for greater than 0 
+     if($givingUpAfter -gt 0){
+          #$givingUpAfter is a positive integer greater than 0
+          #convert to string so it works in the command string even though it will be read as an int.
+          #command string building is weird, sigh.
+          $givingUpAfterString = [string]$givingUpAfter
+          $displayDialogCommand = $displayDialogCommand + "giving up after $givingUpAfterString "
+     }
+
 	
 	$dialogReply = $displayDialogCommand|/usr/bin/osascript -so
 	
@@ -136,7 +165,7 @@ function Get-DisplayDialog {
 [System.Collections.ArrayList]$dialogReplyArray = @()
 [System.Collections.ArrayList]$dialogReply = @()
 
-$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -defaultAnswer "Default answer" -buttons "one","two","three" -iconEnum "note" -title "My Title"
+$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -givingUpAfter 20
 #-buttons "one","two","three"
 
 #test for cancel button
@@ -155,8 +184,7 @@ $dialogReplyArray = $dialogReplyString.Split(",")
 foreach($item in $dialogReplyArray) {
     $dialogReply.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
 }
-$dialogReply
-#$dialogReply[0]
-#$dialogReply[1]
+return $dialogReply
+
 
 

@@ -15,3 +15,7 @@ Should Apple change the facts, I'll change my opinion. Until then?
 
 No, this is not particularly elegant code, but it IS well-commented code and somewhat readable
 Also note that we only do icon enums and paths to icns files (as posix paths only for now). the int and text are older ways of referring to icons that may not worth the effort at first.
+
+for anyone interested, the reason for not having iconEnum as an actual enum is that it's not worth the work to not have it be a string. And yes, normally in AppleScript, you can also use an int/number for note/caution/stop, but for now, not here. Again, if you have a critical reason for having to do the int as well, i can be convinced to use a proper enum
+
+in all the parameters, as we graft them on to the command, we add a trailing space so the commands are correct
