@@ -182,7 +182,7 @@ $dialogReplyArray = $dialogReplyString.Split(",")
 
 #build dialog reply without trailing/leading spaces
 foreach($item in $dialogReplyArray) {
-    $dialogReply.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
+     $dialogReply.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
 }
 return $dialogReply
 
