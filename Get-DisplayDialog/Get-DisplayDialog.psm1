@@ -28,7 +28,18 @@ Parameter List
 -cancelButtonText, optional, string, like defaultButtonText only for the cancel button, all the defaultButtonText caveats apply
 -cancelButtonInt, optional, integer, like defaultButtonInt for the cancel button, all defaultButtonInt caveats apply
 -title, optional, string, the text shown in the title bar of the dialog window not the text in the window itself
--iconEnum, optional, string, one of three values works: "note", "caution", "stop", anything else will cause an error
+-iconEnum, optional, string, one of three values works: "note", "caution", "stop", anything else will cause a badIconEnumError error to be returned
+-iconPath, optional, string, path to a .icns file to be used in the dialog. If both iconEnum and iconPath are passed, iconEnum will be used
+-givingUpAfter, optional, integer, the number of *seconds* the dialog will wait. using 0 or a neg. integer = never time out. The gave up return only happens
+     if this value is passed to the module
+
+There are two error messages that happen. If you hit cancel for the dialog, the module returns a "userCancelError" string instead of the hashtable
+if you pass a bad value for iconEnum, then a "badIconEnumError" string is returned instead of the hashtable.
+
+At most you can get three values in the hashtable:
+button returned (always unless you canceld)
+text returned (only if you use defaultAnswer)
+giving up after (only if you use givingUpAfter)
 
 .EXAMPLE
 example
