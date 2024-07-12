@@ -45,7 +45,7 @@ function Get-DisplayDialog {
           [Parameter(Mandatory = $true,Position=0)][string] $dialogText,
           [Parameter(Mandatory = $false)][string] $defaultAnswer,
           [Parameter(Mandatory = $false)][bool] $hiddenAnswer = $false, #default for this is false normally
-          [Parameter(Mandatory = $false)][array] $buttons = @(),
+          [Parameter(Mandatory = $false)][array] $buttons = [string]@(),
           [Parameter(Mandatory = $false)][string] $defaultButtonText,
           [Parameter(Mandatory = $false)][int] $defaultButtonInt,
           [Parameter(Mandatory = $false)][string] $cancelButtonText,
