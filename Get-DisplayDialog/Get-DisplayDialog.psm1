@@ -2,10 +2,27 @@
 
 <#
 .SYNOPSIS
-Synopsis
+A module that bridges the AppleScript display dialog primitive to PowerShell so you can display dialog information to the user, get simple text input from them, etc.
 
 .DESCRIPTION
-Description
+This module takes advantage of piping commands to /usr/bin/osascript to allow powershell to use AppleScript's display dialog function, 
+(https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayDialogsandAlerts.html
+for more info). This plugs one of the holes in PowerShell on any platform, support for certain GUI functions like having someone enter text,
+choose a file, a folder, etc. Even on Windows, this can be remarkably kludgy. So this takes advantage of osascript's ability to run AppleScript
+from the Unix shell environment. There are a number of parameters you can use with this (listed below) to customize the dialog. The only *required*
+parameter is -dialogText. Note that parameter also has position 0, so you can just call Get-DisplayDialog "Some text" and you'll get a basic dialog
+with "Some text" in it.
+
+Not all possible parameters are currently supported. the "with icon <text or integer>" which is only used for resource IDs is not supported. Keep in mind
+AppleScript is an older language dating back to the mid-1990s, and back then, resource IDs were important. Barring a real need for them, we're not using them.
+The enum for the common icons (note, caution, stop) only support text. They *could* support ints as well, but that's a lot of work (somewhat) for not a lot
+of added functionality, so again, if this is a real need, let me know and I'll put it in.
+
+Parameter List
+-dialogText, required, string, the text you see in the dialog, position 0
+-defaultAnswer, optional, string, required if you want the user to be able to enter text
+-hiddenAnswer, optional, (powershell) boolean, only of use with -defaultAnswer, "hides the entered text by displaying as bullets"
+- 
 
 .EXAMPLE
 example
@@ -181,7 +198,8 @@ function Get-DisplayDialog {
 
      #we have to do this because we can't modify an array(list) we are iterating through
      [System.Collections.ArrayList]$dialogReplyArray = @()
-     [System.Collections.ArrayList]$dialogReply = @()  
+     [System.Collections.ArrayList]$dialogReplyArrayList = @()
+     $dialogReply = [ordered]@{} 
 
      #test for cancel button
      if($dialogReplyString.Contains("execution error: User canceled. `(-128`)")) {
@@ -194,8 +212,16 @@ function Get-DisplayDialog {
      #we have to use a different array for the final output because you can't modify an array you're
      #iterating through
      foreach($item in $dialogReplyArray) {
-          $dialogReply.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
+          $dialogReplyArrayList.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
      }
+
+     #add the return items to the hashtable because that's way more organized
+     foreach($item in $dialogReplyArrayList) {
+          $hashEntry = $item.Split(":")
+          $dialogReply.Add($hashEntry[0],$hashEntry[1])
+     }
+
+     #return the hashtable
      return $dialogReply
 }
 

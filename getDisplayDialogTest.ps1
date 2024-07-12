@@ -3,7 +3,7 @@ function Get-DisplayDialog {
           [Parameter(Mandatory = $true,Position=0)][string] $dialogText,
           [Parameter(Mandatory = $false)][string] $defaultAnswer,
           [Parameter(Mandatory = $false)][bool] $hiddenAnswer = $false, #default for this is false normally
-          [Parameter(Mandatory = $false)][array] $buttons = @(),
+          [Parameter(Mandatory = $false)][array] $buttons = [string]@(),
           [Parameter(Mandatory = $false)][string] $defaultButtonText,
           [Parameter(Mandatory = $false)][int] $defaultButtonInt,
           [Parameter(Mandatory = $false)][string] $cancelButtonText,
@@ -163,9 +163,10 @@ function Get-DisplayDialog {
 
 #we have to do this because we can't modify an array(list) we are iterating through
 [System.Collections.ArrayList]$dialogReplyArray = @()
-[System.Collections.ArrayList]$dialogReply = @()
+[System.Collections.ArrayList]$dialogReplyArrayList = @()
+$dialogReply = [ordered]@{}
 
-$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -givingUpAfter 20
+$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -givingUpAfter 20 -buttons "one","two"
 #-buttons "one","two","three"
 
 #test for cancel button
@@ -182,8 +183,16 @@ $dialogReplyArray = $dialogReplyString.Split(",")
 
 #build dialog reply without trailing/leading spaces
 foreach($item in $dialogReplyArray) {
-     $dialogReply.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
+     $dialogReplyArrayList.Add($item.trim()) |Out-Null #so we don't see 0/1/etc.
 }
+ 
+#build the hashtable for the return
+foreach($item in $dialogReplyArrayList) {
+     $hashEntry = $item.Split(":")
+     $dialogReply.Add($hashEntry[0],$hashEntry[1])
+}
+
+#return the hashtable
 return $dialogReply
 
 
