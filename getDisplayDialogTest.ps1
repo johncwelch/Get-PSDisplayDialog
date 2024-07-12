@@ -17,8 +17,10 @@ function Get-DisplayDialog {
      )
 	$hasDefaultButton = $false
 
-     #default dialog command
+     #default dialog command (this is required so it ALWAYS has to be here)
      $displayDialogCommand = "display dialog `"$dialogText`" "
+
+	#as we process each condition, we build out the display dialog command
 
      #is there a default answer? if there is, put it on the end of the command
      if(-not [string]::IsNullOrEmpty($defaultAnswer)) {

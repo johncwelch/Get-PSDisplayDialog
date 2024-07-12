@@ -12,3 +12,5 @@ Because user Automation has no value to the OS team or the Application Teams. Pe
 Should Apple change the facts, I'll change my opinion. Until then?
 
 🖕🖕🖕
+
+No, this is not particularly elegant code, but it IS well-commented code and somewhat readable

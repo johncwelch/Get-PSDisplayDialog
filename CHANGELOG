@@ -1,0 +1,13 @@
+CHANGELOG
+
+20240711
+okay, so having figured out passing variables to osascript (tl;dr - build the applescript command then pipe it to /usr/bin/osascript)
+and how to catch the "error" of the cancel button (osascript -so) in a useful way, the script here now can process:
+base dialog text (mandatory) $$dialogText
+default answer (optional, required for text entry from human) $default answer
+hidden answer (show entered text as bullets, default is false as per standard additions)
+buttons (optional) $buttons, this is an array, kind of a pain in the ass
+default button (text, optional) mutually exclusive to...
+default button (int, optional), this too was annoying to build out, but it works
+
+we're well on our way to this module!
