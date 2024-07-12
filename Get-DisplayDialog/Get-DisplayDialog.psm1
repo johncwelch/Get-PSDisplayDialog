@@ -5,41 +5,28 @@
 A module that bridges the AppleScript display dialog primitive to PowerShell so you can display dialog information to the user, get simple text input from them, etc.
 
 .DESCRIPTION
-This module takes advantage of piping commands to /usr/bin/osascript to allow powershell to use AppleScript's display dialog function, 
-(https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayDialogsandAlerts.html
-for more info). This plugs one of the holes in PowerShell on any platform, support for certain GUI functions like having someone enter text,
-choose a file, a folder, etc. Even on Windows, this can be remarkably kludgy. So this takes advantage of osascript's ability to run AppleScript
-from the Unix shell environment. There are a number of parameters you can use with this (listed below) to customize the dialog. The only *required*
-parameter is -dialogText. Note that parameter also has position 0, so you can just call Get-DisplayDialog "Some text" and you'll get a basic dialog
-with "Some text" in it.
+This module takes advantage of piping commands to /usr/bin/osascript to allow powershell to use AppleScript's display dialog function, (https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayDialogsandAlerts.html for more info). 
 
-Not all possible parameters are currently supported. the "with icon <text or integer>" which is only used for resource IDs is not supported. Keep in mind
-AppleScript is an older language dating back to the mid-1990s, and back then, resource IDs were important. Barring a real need for them, we're not using them.
-The enum for the common icons (note, caution, stop) only support text. They *could* support ints as well, but that's a lot of work (somewhat) for not a lot
-of added functionality, so again, if this is a real need, let me know and I'll put it in.
+This plugs one of the holes in PowerShell on any platform, support for certain GUI functions like having someone enter text, choose a file, a folder, etc. Even on Windows, this can be remarkably kludgy. 
 
-Parameter List
--dialogText, required, string, the text you see in the dialog, position 0
--defaultAnswer, optional, string, required if you want the user to be able to enter text
--hiddenAnswer, optional, (powershell) boolean, only of use with -defaultAnswer, "hides the entered text by displaying as bullets"
--buttons, optional, string array of buttons. It can be 1-3 buttons. If you try to put > 3 buttons, the module will fuss at you and exit
--defaultButtonText, optional, string, explicitly set the default button for use with buttons. THE TEXT HAS TO MATCH THE TEXT IN $buttons
--defaultButtonInt, optional, integer, the int version of -defaultButtonText. Note that buttons start at 1, not 0, and again, must match $buttons
--cancelButtonText, optional, string, like defaultButtonText only for the cancel button, all the defaultButtonText caveats apply
--cancelButtonInt, optional, integer, like defaultButtonInt for the cancel button, all defaultButtonInt caveats apply
--title, optional, string, the text shown in the title bar of the dialog window not the text in the window itself
--iconEnum, optional, string, one of three values works: "note", "caution", "stop", anything else will cause a badIconEnumError error to be returned
--iconPath, optional, string, path to a .icns file to be used in the dialog. If both iconEnum and iconPath are passed, iconEnum will be used
--givingUpAfter, optional, integer, the number of *seconds* the dialog will wait. using 0 or a neg. integer = never time out. The gave up return only happens
-     if this value is passed to the module
+This module takes advantage of osascript's ability to run AppleScript from the Unix shell environment. There are a number of parameters you can use with this (in -Detailed) to customize the dialog. The only *required* parameter is -dialogText. Note that parameter also has position 0, so you can just call Get-DisplayDialog "Some text" and you'll get a basic dialog with "Some text" in it.
 
-There are two error messages that happen. If you hit cancel for the dialog, the module returns a "userCancelError" string instead of the hashtable
-if you pass a bad value for iconEnum, then a "badIconEnumError" string is returned instead of the hashtable.
+Not all possible parameters are currently supported. the "with icon <text or integer>" which is only used for resource IDs is not supported. Keep in mind AppleScript is an older language dating back to the mid-1990s, and back then, resource IDs were important. Barring a real need for them, we're not using them.
+
+The enum for the common icons (note, caution, stop) only support text. They *could* support ints as well, but that's a lot of work (somewhat) for not a lot of added functionality, so again, if this is a real need, let me know and I'll put it in.
+
+use Get-Help Get-DisplayDialog - Detailed for Parameter List
+
+There are two error messages that happen: 
+
+1) If you hit cancel for the dialog, the module returns a "userCancelError" string instead of the hashtable
+2) if you pass a bad value for iconEnum, then a "badIconEnumError" string is returned instead of the hashtable
 
 At most you get three values in the hashtable:
-button returned (always unless you canceld)
-text returned (only if you use defaultAnswer)
-giving up after (only if you use givingUpAfter)
+
+1) button returned (string, always unless you canceled)
+2) text returned (string, only if you use defaultAnswer)
+3) gave up (boolean, only if you use givingUpAfter)
 
 The hashtable is returned to whatever called the function
 
@@ -100,8 +87,10 @@ userCancelError
 
 .EXAMPLE
 dialog with Caution Icon enum: Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -iconEnum "Caution" 
+returns same as any dialog with just dialog text and a default answer
 
-.EXAMPLE dialog that gives up after 20 seconds and no button clicked:  Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -givingUpAfter 20
+.EXAMPLE 
+dialog that gives up after 20 seconds and no button clicked:  Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -givingUpAfter 20
 returns:
 
 Name                           Value
@@ -110,7 +99,8 @@ button returned
 text returned                  type something
 gave up                        true
 
-.EXAMPLE same dialog clicking button: Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -givingUpAfter 20
+.EXAMPLE 
+same dialog clicking button: Get-DisplayDialog "My simple dialog" -defaultAnswer "type something" -givingUpAfter 20
 returns:
 
 Name                           Value
@@ -118,7 +108,6 @@ Name                           Value
 button returned                OK
 text returned                  type something
 gave up                        false
-
 
 .NOTES
 There's many combinations, and hopefully this will be useful for y'all. Will slowly be rolling out modules for all the different AppleScript UI Primitives
@@ -129,20 +118,18 @@ https://github.com/johncwelch/Get-PSDisplayDialog
 
 function Get-DisplayDialog {
      Param (
-          [Parameter(Mandatory = $true,Position=0)][string] $dialogText,
-          [Parameter(Mandatory = $false)][string] $defaultAnswer,
-          [Parameter(Mandatory = $false)][bool] $hiddenAnswer = $false, #default for this is false normally
-          [Parameter(Mandatory = $false)][array] $buttons,
-          [Parameter(Mandatory = $false)][string] $defaultButtonText,
-          [Parameter(Mandatory = $false)][int] $defaultButtonInt,
-          [Parameter(Mandatory = $false)][string] $cancelButtonText,
-          [Parameter(Mandatory = $false)][int] $cancelButtonInt,
-          [Parameter(Mandatory = $false)][string] $title,
-          #[Parameter(Mandatory = $false)][string] $iconText,
-          #[Parameter(Mandatory = $false)][int] $iconInt,
-          [Parameter(Mandatory = $false)][string] $iconEnum,
-          [Parameter(Mandatory = $false)][string] $iconPath,
-          [Parameter(Mandatory = $false)][int] $givingUpAfter 
+          [Parameter(Mandatory = $true,Position=0)][string] $dialogText, #string, only required parameter
+          [Parameter(Mandatory = $false)][string] $defaultAnswer, #string, required if you want input from the human
+          [Parameter(Mandatory = $false)][bool] $hiddenAnswer = $false, #default for this is false, used to "hide" text input in window
+          [Parameter(Mandatory = $false)][array] $buttons, #string array with 1-3 elements
+          [Parameter(Mandatory = $false)][string] $defaultButtonText, #string matching name on one of the buttons in the dialog
+          [Parameter(Mandatory = $false)][int] $defaultButtonInt, #int between 1 & 3
+          [Parameter(Mandatory = $false)][string] $cancelButtonText, #string matching name on one of the buttons in the dialog
+          [Parameter(Mandatory = $false)][int] $cancelButtonInt, #int between 1 & 3
+          [Parameter(Mandatory = $false)][string] $title, #string, title of dialog window
+          [Parameter(Mandatory = $false)][string] $iconEnum, #either "note", "caution", or "stop"
+          [Parameter(Mandatory = $false)][string] $iconPath, #path to .icns file
+          [Parameter(Mandatory = $false)][int] $givingUpAfter #integer for the number of seconds the dialog will wait before giving up
      )
 
      if (-Not $IsMacOS) {
