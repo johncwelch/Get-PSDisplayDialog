@@ -122,8 +122,15 @@ function Get-DisplayDialog {
      ##iconEnum and/or path
      if(-not [string]::IsNullOrEmpty($iconEnum)){
           #$iconEnum wins if both enum and path are filled out
-          $hasIcon = $true
-          $displayDialogCommand = $displayDialogCommand + "with icon $iconEnum "
+          #make sure only using the right icon enum values
+          if(($iconEnum -ne "note") -and ($iconEnum -ne "caution") -and ($iconEnum -ne "stop") ){   
+			$iconEnum     
+			return "badIconEnumError"
+          } else {
+			$hasIcon = $true
+			$displayDialogCommand = $displayDialogCommand + "with icon $iconEnum "
+              # $displayDialogCommand
+          }
      } elseif ((-not [string]::IsNullOrEmpty($iconPath)) -and (-not $hasIcon)) {
           #no $iconEnum but $iconPath
           $hasIcon = $true
@@ -147,12 +154,12 @@ function Get-DisplayDialog {
           $displayDialogCommand = $displayDialogCommand + "giving up after $givingUpAfterString "
      }
 
-	
-	$dialogReply = $displayDialogCommand|/usr/bin/osascript -so
+	#$displayDialogCommand
+	$dialogReplyString = $displayDialogCommand|/usr/bin/osascript -so
 	
 	#Write-Output "The dialog reply is: $dialogReply"
      
-     return $dialogReply
+     return $dialogReplyString
 
 ##building the full command will end up being a big fat if then else chain, but it will be worth it
 ##or we could put everything in an array and switch-case the whole thing
@@ -166,8 +173,7 @@ function Get-DisplayDialog {
 [System.Collections.ArrayList]$dialogReplyArrayList = @()
 $dialogReply = [ordered]@{}
 
-$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -givingUpAfter 20 -buttons "one","two"
-#-buttons "one","two","three"
+$dialogReplyString = Get-DisplayDialog -dialogText "Test Dialog" -givingUpAfter 20 -buttons "one","two" -iconEnum "stop"
 
 #test for cancel button
 if($dialogReplyString.Contains("execution error: User canceled. `(-128`)")) {
@@ -176,9 +182,8 @@ if($dialogReplyString.Contains("execution error: User canceled. `(-128`)")) {
 }
 
 #$dialogReplyString.GetType()
-Write-Output "`n"
-Write-Output "`n"
 #build initial reply array
+
 $dialogReplyArray = $dialogReplyString.Split(",")
 
 #build dialog reply without trailing/leading spaces

@@ -22,7 +22,13 @@ Parameter List
 -dialogText, required, string, the text you see in the dialog, position 0
 -defaultAnswer, optional, string, required if you want the user to be able to enter text
 -hiddenAnswer, optional, (powershell) boolean, only of use with -defaultAnswer, "hides the entered text by displaying as bullets"
-- 
+-buttons, optional, string array of buttons. It can be 1-3 buttons. If you try to put > 3 buttons, the module will fuss at you and exit
+-defaultButtonText, optional, string, explicitly set the default button for use with buttons. THE TEXT HAS TO MATCH THE TEXT IN $buttons
+-defaultButtonInt, optional, integer, the int version of -defaultButtonText. Note that buttons start at 1, not 0, and again, must match $buttons
+-cancelButtonText, optional, string, like defaultButtonText only for the cancel button, all the defaultButtonText caveats apply
+-cancelButtonInt, optional, integer, like defaultButtonInt for the cancel button, all defaultButtonInt caveats apply
+-title, optional, string, the text shown in the title bar of the dialog window not the text in the window itself
+-iconEnum, optional, string, one of three values works: "note", "caution", "stop", anything else will cause an error
 
 .EXAMPLE
 example
@@ -169,8 +175,14 @@ function Get-DisplayDialog {
      ##iconEnum and/or path
      if(-not [string]::IsNullOrEmpty($iconEnum)){
           #$iconEnum wins if both enum and path are filled out
-          $hasIcon = $true
-          $displayDialogCommand = $displayDialogCommand + "with icon $iconEnum "
+          #make sure only using the right icon enum values
+          if(($iconEnum -ne "note") -and ($iconEnum -ne "caution") -and ($iconEnum -ne "stop") ){   
+			$iconEnum     
+			return "badIconEnumError"
+          } else {
+			$hasIcon = $true
+			$displayDialogCommand = $displayDialogCommand + "with icon $iconEnum "
+          }
      } elseif ((-not [string]::IsNullOrEmpty($iconPath)) -and (-not $hasIcon)) {
           #no $iconEnum but $iconPath
           $hasIcon = $true
