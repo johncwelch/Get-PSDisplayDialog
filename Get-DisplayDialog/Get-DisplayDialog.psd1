@@ -80,7 +80,7 @@
 			Tags = @("macOS","Mac","display_dialog","AppleScript","AppleScript Bridge")
     
 			# A URL to the license for this module.
-			# LicenseUri = ''
+			LicenseUri = 'https://github.com/johncwelch/Get-PSDisplayDialog/blob/main/LICENSE.txt'
     
 			# A URL to the main website for this project.
 			ProjectUri = 'https://github.com/johncwelch/Get-PSDisplayDialog'
