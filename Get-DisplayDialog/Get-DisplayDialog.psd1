@@ -77,7 +77,7 @@
 		PSData = @{
     
 			# Tags applied to this module. These help with module discovery in online galleries.
-			Tags = @("macOS","Mac","display_dialog","AppleScript","AppleScript Bridge")
+			Tags = @("macOS","Mac","display_dialog","AppleScript","AppleScript_Bridge")
     
 			# A URL to the license for this module.
 			LicenseUri = 'https://github.com/johncwelch/Get-PSDisplayDialog/blob/main/LICENSE.txt'
