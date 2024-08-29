@@ -5,15 +5,22 @@
 A module that bridges the AppleScript display dialog primitive to PowerShell so you can display dialog information to the user, get simple text input from them, etc.
 
 .DESCRIPTION
-This module takes advantage of piping commands to /usr/bin/osascript to allow powershell to use AppleScript's display dialog function, (https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayDialogsandAlerts.html for more info).
+This module takes advantage of piping commands to /usr/bin/osascript to allow powershell to use AppleScript's display dialog function, 
+(https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayDialogsandAlerts.html for more info).
 
-This plugs one of the holes in PowerShell on any platform, support for certain GUI functions like having someone enter text, choose a file, a folder, etc. Even on Windows, this can be remarkably kludgy.
+This plugs one of the holes in PowerShell on any platform, support for certain GUI functions like having someone enter text, choose a file, a folder, etc. 
+Even on Windows, this can be remarkably kludgy.
 
-This module takes advantage of osascript's ability to run AppleScript from the Unix shell environment. There are a number of parameters you can use with this (in -Detailed) to customize the dialog. The only *required* parameter is -dialogText. Note that parameter also has position 0, so you can just call Get-DisplayDialog "Some text" and you'll get a basic dialog with "Some text" in it.
+This module takes advantage of osascript's ability to run AppleScript from the Unix shell environment. There are a number of parameters you can use with this,
+(in -Detailed) to customize the dialog. The only *required* parameter is -dialogText. Note that parameter also has position 0, 
+so you can just call Get-DisplayDialog "Some text" and you'll get a basic dialog with "Some text" in it.
 
-Not all possible parameters are currently supported. the "with icon <text or integer>" which is only used for resource IDs is not supported. Keep in mind AppleScript is an older language dating back to the mid-1990s, and back then, resource IDs were important. Barring a real need for them, we're not using them.
+Not all possible parameters are currently supported. the "with icon <text or integer>" which is only used for resource IDs is not supported. 
+Keep in mind AppleScript is an older language dating back to the mid-1990s, and back then, resource IDs were important. 
+Barring a real need for them, we're not using them.
 
-The enum for the common icons (note, caution, stop) only support text. They *could* support ints as well, but that's a lot of work (somewhat) for not a lot of added functionality, so again, if this is a real need, let me know and I'll put it in.
+The enum for the common icons (note, caution, stop) only supports text. They *could* support ints as well, but that's a lot of work (somewhat) 
+for not a lot of added functionality, so again, if this is a real need, let me know and I'll put it in.
 
 use Get-Help Get-DisplayDialog - Detailed for Parameter List
 
