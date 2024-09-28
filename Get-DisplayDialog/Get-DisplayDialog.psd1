@@ -8,7 +8,7 @@
 
 @{
 	RootModule = 'Get-DisplayDialog.psm1'
-	ModuleVersion = '1.0'
+	ModuleVersion = '1.0.1'
 	GUID = '46c4a80b-df81-4bd9-b5ad-077da14a1fe8'
 	Author = 'John C. Welch'
 	CompanyName = 'Bynkii.com'
